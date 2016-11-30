@@ -1,2 +1,13 @@
-this is a software
-license
+#this is a software
+it's really good
+#!/usr/bin/env node
+console.log('hello world');
+!#
+##license
+#with a second heading
+##and then something testable
+#!client
+something to parse
+!#
+##then something else
+this is really really fun
