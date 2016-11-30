@@ -1,0 +1,45 @@
+#!/bin/bash
+clear
+
+# handle no file passed
+if [ -z "$1" ]
+then
+  echo please provide a file to process
+  exit
+fi
+
+# check if output folder already exists
+if [ -d bash_down_and_out ]
+then
+  read -p "bash_down_and_out output folder exists. overwrite? " yn
+  case $yn in
+      [Yy]* ) echo okie-dokie;;
+      [Nn]* ) exit;;
+      * ) echo "Please answer yes or no.";;
+  esac
+fi
+
+# vars for loop
+filename=$1
+bin_dir="$(dirname $0)"
+cur_script=""
+script_no=0
+heading=""
+section_no=(1)
+
+# (re)create output files
+rm -rf bash_down_and_out
+mkdir bash_down_and_out
+mkdir bash_down_and_out/scripts
+mkdir bash_down_and_out/test
+touch bash_down_and_out/spec.md
+
+# iterate through lines in file and decide how to parse/output them
+while read -r line
+do
+  echo $line
+  # if it starts with #!/some_shell write and run a script with all lines until !# on its own line unless there is a one line command on the same line
+  # if it starts with #!some_local_path parse the line with a script in the bin folder
+  # if it is the !# then clear out cur_script
+  # else write to markdown file - keeping track of the spec section
+done < "$filename"
