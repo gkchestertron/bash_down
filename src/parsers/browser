@@ -1,0 +1,35 @@
+#!/bin/bash
+last_line="$1"
+heading="$2"
+statement=$(echo "$3" | sed "s/^'//" | sed "s/'$//")
+
+if [ ! -z "$(echo "$statement" | grep '^until')" ]
+then
+    statement="$(echo $statement | sed 's/^until *//')"
+    cat<<here
+    {
+        name: '$heading',
+
+        check: function () {
+            return $statement;
+        },
+
+        interval: 1000,
+
+        retry: 10
+    },
+here
+else
+    cat<<here
+    {
+      name: '$heading',
+
+      test: function () {
+        if (!($statement))
+            console.error('Fail: $heading - $last_line');
+        else
+            console.log('Success: $heading - $last_line');
+      }
+    },
+here
+fi

@@ -4,8 +4,10 @@ clear
 # vars
 bin_dir="$(dirname $(realpath $0))"
 filename=$1
+last_line=""
 cur_script=""
 script_no=0
+test_no=0
 heading=""
 heading_path=""
 section_no=()
@@ -43,12 +45,21 @@ rm -rf bash_down/tests
 mkdir bash_down/tests
 rm bash_down/spec.md
 touch bash_down/spec.md
+rm bash_down/spec.txt
+touch bash_down/spec.txt
 
 # iterate through lines in file and decide how to parse/output them
+IFS=''
 while read -r line
 do
+  # commented script
+  if [ ! -z "$(echo $line | grep -e '^[ ]*##![/]*.*$')" ]
+  then
+    cur_script="./bash_down/scripts/$script_no"_"$heading_path"
+    commented_script="$heading_path"
+
   # run through parser if we have a local path after #!
-  if [ ! -z "$(echo $line | grep -e '^[ ]*#![^ /].*$')" ]
+  elif [ ! -z "$(echo $line | grep -e '^[ ]*#![^ /].*$')" ]
   then
     local_parser
 
@@ -62,41 +73,47 @@ do
   then
     inline_script_close
 
-  # commented script
-  elif [ ! -z "$(echo $line | grep -e '^[ ]*##![/]*.*$')" ]
-  then
-    commented_script="$heading_path"
-
   # write to current script if we have one
   elif [ ! -z "$cur_script" ]
   then
     if [ -z "$commented_script" ]
     then
       echo $line >> "$cur_script"
-    else
-      commented_script=""
     fi
 
   # heading
   elif [ ! -z "$(echo $line | grep -e '^#')" ]
   then
     heading
+    last_line="$heading"
     
   # just write to markdown
   else
     echo $line >> bash_down/spec.md
+    echo $line >> bash_down/spec.txt
+    last_line="$line"
   fi
 
-  # if it starts with #!/some_shell write and run a script with all lines until !# on its own line unless there is a one line command on the same line
-  # if it starts with #!some_local_path parse the line with a script in the bin folder
-  # if it is the !# then clear out cur_script
 done < "$filename"
 
-# then execute the runners
-for file in bash_down/tests/*
+# print the text spec
+cat bash_down/spec.txt
+
+# then execute the scripts
+for file in bash_down/scripts/*
 do
   if [ -s $file ]
   then
+    "$file"
+  fi
+done
+
+# then execute the runners
+for path in bash_down/tests/*
+do
+  if [ -s $path ]
+  then
+  file=`basename "$path"`
     output=`"./bash_down/runners/$file" "./bash_down/tests/$file"`
     cat<<<"$output"
   fi

@@ -28,9 +28,10 @@ join_by (){
 # local parser
 local_parser(){
   script="$(echo $line | sed 's/^[ ]*#!//' | sed 's/ .*$//')"
-  cmd="$(echo $line | sed 's/^[ ]*#![^ ]*//')"
-  output=`"./bash_down/parsers/$script" "$heading" "$heading_path" "$cmd"`
+  cmd=$(echo $line | sed 's/^[ ]*#![^ ]* //' | sed 's/ *$//')
+  output=`"./bash_down/parsers/$script" "$last_line" "$heading_path" "${cmd[@]}"`
   cat <<< "$output" >> "./bash_down/tests/$script"
+  ((test_no++))
 }
 
 # inline script 
@@ -49,13 +50,13 @@ inline_script(){
 
 # close inline script
 inline_script_close(){
-  if [ ! -z "$cur_script" ]
+  if [ -z "$commented_script" ]
   then
     chmod +x $cur_script
-    $cur_script
-    cur_script=""
-    ((script_no++))
   fi
+  commented_script=""
+  cur_script=""
+  ((script_no++))
 }
 
 # heading - generate section number and write to markdown
@@ -67,4 +68,6 @@ heading() {
   get_section_no
   section=$(join_by . "${section_no[@]}")
   echo "$hashes$section $heading" >> bash_down/spec.md
+  echo "$section $heading" >> bash_down/spec.txt
 }
+
