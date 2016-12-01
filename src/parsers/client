@@ -1,1 +1,11 @@
-hello client
+#!/bin/bash
+heading="$1"
+heading_path="$2"
+statement="$3"
+
+cat<<heredoc
+'$heading_path': function () {
+  if (!($statement))
+    throw 'Fail: $heading'
+}
+heredoc

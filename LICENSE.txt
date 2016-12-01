@@ -6,7 +6,7 @@ console.log('hello world');
 ##license
 #with a second heading
 ##and then something testable
-#!client
+#!client '$("#highlander-wrapper ul.nav-tabs li").length === 3'
 something to parse
 !#
 ##then something else

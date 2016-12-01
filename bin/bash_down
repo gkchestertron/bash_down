@@ -6,6 +6,7 @@ clear
 if [ -z "$1" ]
 then
   echo please provide a file to process
+  echo
   exit
 fi
 
@@ -69,8 +70,11 @@ do
   # run through parser if we have a local path after #!
   if [ ! -z "$(echo $line | grep -e '^[ ]*#![^ /].*$')" ]
   then
-    script="$(echo $line | sed 's/^[ ]*#!//')"
-    cat "$bin_dir/../src/parsers/$script"
+    script="$(echo $line | sed 's/^[ ]*#!//' | sed 's/ .*$//')"
+    cmd="$(echo $line | sed 's/^[ ]*#![^ ]*//')"
+    output=`"$bin_dir/../src/parsers/$script" "$heading" "$heading_path" "$cmd"`
+    cat <<< "$output" >> "./bash_down_and_out/tests/$script"
+
   # start writing temp script if we have #!
   elif [ ! -z "$(echo $line | grep -e '^[ ]*#![/]*.*$')" ]
   then
@@ -106,7 +110,7 @@ do
   then
     hashes="$(echo $line | sed s/[^#].*$//)"
     heading="$(echo $line | sed s/^[#]*//)"
-    heading_path="$(echo $heading | sed 's/ /-/g')"
+    heading_path="$(echo $heading | sed -E 's/[^_a-zA-Z0-9]+/-/g')"
     depth=${#hashes}
     get_section_no
     section=$(join_by . "${section_no[@]}")
@@ -123,3 +127,6 @@ do
 done < "$filename"
 
 # then execute the runners
+
+output=`"$bin_dir/../src/runners/client" ./bash_down_and_out/tests/client`
+cat<<<"$output"

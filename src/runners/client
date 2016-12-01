@@ -1,0 +1,5 @@
+#!/bin/bash
+file_string="[
+"$(cat "$1")"
+]"
+cat<<<"$file_string"
