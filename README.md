@@ -4,6 +4,23 @@ bash\_down is an extension of markdown that allows you to run arbitrary shell co
 #2 Markdown
 Since the parser just writes whatever is not specifically bash\_down to a file, you can use whatever flavor of markdown you wish.
 
+##2.1 Section Numbers
+The one convenience added to markdown for you is section numbers. Use Headings to indicate sections and nesting. The number of "#"s indicate the level of nesting.
+i.e.:
+```
+~#heading
+~some text
+~
+~##nested heading
+```
+will produce:
+```
+~#1 heading
+~some text
+~
+~##1.1 nested heading
+```
+
 #3 Scripts
 To add arbitrary scripts and commands simply make a line that contains only "#!". The following lines will be saved to a script and then run after you close your inline script with a line containing just "!#".
 i.e.:
