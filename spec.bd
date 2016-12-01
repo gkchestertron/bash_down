@@ -39,6 +39,9 @@ i.e.:
 ~!#
 ```
 
+##Commenting scripts
+Scripts can be commented by adding a "#" before the "#!". i.e.: "##!"
+
 #Tests
 Inline test annotations are meant to be one-liners and are created by using the #! with the name of an existing parser (in src/parsers/).
 i.e.:
