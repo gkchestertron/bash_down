@@ -52,8 +52,12 @@ touch bash_down/spec.txt
 IFS=''
 while read -r line
 do
+  # commented single line
+  if [ ! -z "$(echo $line | grep -e '^[ ]*##![^ /].*$')" ]
+  then
+    continue 
   # commented script
-  if [ ! -z "$(echo $line | grep -e '^[ ]*##![/]*.*$')" ]
+  elif [ ! -z "$(echo $line | grep -e '^[ ]*##![/]*.*$')" ]
   then
     cur_script="./bash_down/scripts/$script_no"_"$heading_path"
     commented_script="$heading_path"
