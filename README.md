@@ -39,6 +39,9 @@ i.e.:
 ~!#
 ```
 
+##3.2 Commenting scripts
+Scripts can be commented by adding a "#" before the "#!". i.e.: "##!"
+
 #4 Tests
 Inline test annotations are meant to be one-liners and are created by using the #! with the name of an existing parser (in src/parsers/).
 i.e.:
@@ -46,17 +49,24 @@ i.e.:
 ~#!browser "$('.some-class').length === 3"
 ```
 
-##4.1 Parsers
+##4.1 Test Files
+Sometimes a test won't fit on one line or fit the norm of the parser. You can place custom tests (that must conform to your runner) and call them by name. i.e.:
+```
+~#!bash_down arbitrary
+```
+
+##4.2 Parsers
 Parsers are passed the heading they fall under, that heading as a filename-safe string, and whatever arguments you pass to the parser. The output is appended to a file by the same name as the parser in the output's test folder.
 
-##4.2 Runners
+##4.3 Runners
 Runners take the test file created incrementally by the parser and use the data to run tests in one fashion or another.
 
-##4.3 Folder Structure
+##4.4 Folder Structure
 When bash\_down runs it creates a folder named bash\_down\_and\_out with child folders for scripts and tests. The parsers and runners are in the src folder of the bash\_down repository. Every parser must have a runner by the same name and vice versa.
 
-###4.3.1 Scripts Folder 
+###4.4.1 Scripts
 The scripts in the scripts folder are the inline scripts you created.
 
-###4.3.2 Tests Folder
+###4.4.2 Tests
 The tests in the tests folder are the output of the parsers.
+

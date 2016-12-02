@@ -2,7 +2,8 @@
 clear
 
 # vars
-bin_dir="$(dirname $(realpath $0))"
+# bin_dir="$(dirname $(realpath $0))"
+bin_dir="$(dirname $(readlink $0))"
 filename=$1
 last_line=""
 cur_script=""
@@ -15,14 +16,6 @@ depth=0
 
 # include functions from lib
 source "$bin_dir/../src/lib.bash"
-
-# handle no file passed
-if [ -z "$1" ]
-then
-  echo 'please provide a file to process or pass "init" to init this folder'
-  echo
-  exit
-fi
 
 # init
 if [ "$1" = "init"  ]
@@ -39,14 +32,14 @@ then
 fi
 
 # recreate output files
-rm -rf bash_down/scripts
-mkdir bash_down/scripts
-rm -rf bash_down/tests
-mkdir bash_down/tests
-rm bash_down/spec.md
-touch bash_down/spec.md
-rm bash_down/spec.txt
-touch bash_down/spec.txt
+rm -rf bash_down/build/scripts
+mkdir bash_down/build/scripts
+rm -rf bash_down/build/tests
+mkdir bash_down/build/tests
+rm bash_down/build/spec.md
+touch bash_down/build/spec.md
+rm bash_down/build/spec.txt
+touch bash_down/build/spec.txt
 
 # iterate through lines in file and decide how to parse/output them
 IFS=''
@@ -56,10 +49,11 @@ do
   if [ ! -z "$(echo $line | grep -e '^[ ]*##![^ /].*$')" ]
   then
     continue 
+
   # commented script
   elif [ ! -z "$(echo $line | grep -e '^[ ]*##![/]*.*$')" ]
   then
-    cur_script="./bash_down/scripts/$script_no"_"$heading_path"
+    cur_script="./bash_down/build/scripts/$script_no"_"$heading_path"
     commented_script="$heading_path"
 
   # run through parser if we have a local path after #!
@@ -93,18 +87,18 @@ do
     
   # just write to markdown
   else
-    echo $line >> bash_down/spec.md
-    echo $line >> bash_down/spec.txt
+    echo $line >> bash_down/build/spec.md
+    echo $line >> bash_down/build/spec.txt
     last_line="$line"
   fi
 
-done < "$filename"
+done < "bash_down/spec.bd"
 
 # print the text spec
-cat bash_down/spec.txt
+cat bash_down/build/spec.txt
 
 # then execute the scripts
-for file in bash_down/scripts/*
+for file in bash_down/build/scripts/*
 do
   if [ -s $file ]
   then
@@ -113,12 +107,12 @@ do
 done
 
 # then execute the runners
-for path in bash_down/tests/*
+for path in bash_down/build/tests/*
 do
   if [ -s $path ]
   then
   file=`basename "$path"`
-    output=`"./bash_down/runners/$file" "./bash_down/tests/$file"`
+    output=`"./bash_down/runners/$file" "./bash_down/build/tests/$file"`
     cat<<<"$output"
   fi
 done

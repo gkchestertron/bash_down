@@ -29,8 +29,13 @@ join_by (){
 local_parser(){
   script="$(echo $line | sed 's/^[ ]*#!//' | sed 's/ .*$//')"
   cmd=$(echo $line | sed 's/^[ ]*#![^ ]* //' | sed 's/ *$//')
-  output=`"./bash_down/parsers/$script" "$last_line" "$heading_path" "${cmd[@]}"`
-  cat <<< "$output" >> "./bash_down/tests/$script"
+  if [ -f "./bash_down/tests/$cmd" ]
+  then
+    output=`cat "./bash_down/tests/$cmd"`
+  else
+    output=`"./bash_down/parsers/$script" "$last_line" "$heading_path" "$cmd"`
+  fi
+  cat <<< "$output" >> "./bash_down/build/tests/$script"
   ((test_no++))
 }
 
@@ -44,7 +49,7 @@ inline_script(){
     hash_bang="$line"
   fi
 
-  cur_script="./bash_down/scripts/$script_no"_"$heading_path"
+  cur_script="./bash_down/build/scripts/$script_no"_"$heading_path"
   echo "$hash_bang" > "$cur_script"
 }
 
@@ -67,7 +72,7 @@ heading() {
   depth=${#hashes}
   get_section_no
   section=$(join_by . "${section_no[@]}")
-  echo "$hashes$section $heading" >> bash_down/spec.md
-  echo "$section $heading" >> bash_down/spec.txt
+  echo "$hashes$section $heading" >> bash_down/build/spec.md
+  echo "$section $heading" >> bash_down/build/spec.txt
 }
 
