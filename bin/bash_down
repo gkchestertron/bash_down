@@ -76,7 +76,7 @@ do
   then
     if [ -z "$commented_script" ]
     then
-      echo $line >> "$cur_script"
+      echo $line >> $cur_script
     fi
 
   # heading

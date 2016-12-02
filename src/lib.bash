@@ -49,7 +49,7 @@ inline_script(){
     hash_bang="$line"
   fi
 
-  cur_script="./bash_down/build/scripts/$script_no"_"$heading_path"
+  cur_script="bash_down/build/scripts/$script_no"_"$heading_path"
   echo "$hash_bang" > "$cur_script"
 }
 
