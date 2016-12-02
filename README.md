@@ -55,7 +55,8 @@ Runners take the test file created incrementally by the parser and use the data 
 ##4.3 Folder Structure
 When bash\_down runs it creates a folder named bash\_down\_and\_out with child folders for scripts and tests. The parsers and runners are in the src folder of the bash\_down repository. Every parser must have a runner by the same name and vice versa.
 
-###4.3.1 Scripts
+###4.3.1 Scripts Folder 
 The scripts in the scripts folder are the inline scripts you created.
-###4.3.2 Tests
+
+###4.3.2 Tests Folder
 The tests in the tests folder are the output of the parsers.
