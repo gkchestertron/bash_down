@@ -3,9 +3,21 @@ last_line="$1"
 heading="$2"
 statement="$3"
 
-if [ ! -z "$(echo "$statement" | grep '^until')" ]
+if [ ! -z "$(echo "$statement" | grep '^run')" ]
 then
-    statement="$(echo $statement | sed 's/^until *//')"
+    statement="$(echo $statement | sed 's/^run *//')"
+    cat<<here
+    {
+      name: '$heading',
+
+      test: function () {
+        $statement;
+      }
+    },
+here
+elif [ ! -z "$(echo "$statement" | grep '^wait')" ]
+then
+    statement="$(echo $statement | sed 's/^wait *//')"
     cat<<here
     {
         name: '$heading',
@@ -20,6 +32,11 @@ then
     },
 here
 else
+    if [ ! -z "$(echo "$statement" | grep '^test')" ]
+    then
+        statement="$(echo $statement | sed 's/^test *//')"
+    fi
+
     cat<<here
     {
       name: '$heading',
