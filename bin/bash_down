@@ -41,6 +41,11 @@ touch bash_down/build/spec.md
 rm bash_down/build/spec.txt
 touch bash_down/build/spec.txt
 
+if [ -z "$filename" ]
+then
+  filename="bash_down/spec.bd"
+fi
+
 # iterate through lines in file and decide how to parse/output them
 IFS=''
 while read -r line
@@ -92,7 +97,7 @@ do
     last_line="$line"
   fi
 
-done < "bash_down/spec.bd"
+done < "$filename"
 
 # print the text spec
 cat bash_down/build/spec.txt
