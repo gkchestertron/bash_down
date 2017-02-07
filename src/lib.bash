@@ -72,7 +72,7 @@ heading() {
   depth=${#hashes}
   get_section_no
   section=$(join_by . "${section_no[@]}")
-  echo "$hashes$section $heading" >> bash_down/build/spec.md
+  echo "$hashes $section $heading" >> bash_down/build/spec.md
   echo "$section $heading" >> bash_down/build/spec.txt
 }
 
