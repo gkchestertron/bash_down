@@ -15,9 +15,9 @@ then
       }
     },
 here
-elif [ ! -z "$(echo "$statement" | grep '^wait')" ]
+elif [ ! -z "$(echo "$statement" | grep '^await')" ]
 then
-    statement="$(echo $statement | sed 's/^wait *//')"
+    statement="$(echo $statement | sed 's/^await *//')"
     cat<<here
     {
         name: '$heading',
@@ -30,6 +30,11 @@ then
 
         retry: 10
     },
+here
+elif [ -z "$statement" ]
+then
+  cat<<here
+  // $heading - $last_line
 here
 else
     if [ ! -z "$(echo "$statement" | grep '^test')" ]
