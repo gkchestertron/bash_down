@@ -1,0 +1,10 @@
+    {
+      name: ' Introduction',
+
+      test: function () {
+        if (!(window.fuck === 'shit'))
+            console.error('Fail:  Introduction - ');
+        else
+            console.log('Success:  Introduction - ');
+      }
+    },

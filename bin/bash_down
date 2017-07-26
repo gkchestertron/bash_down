@@ -2,9 +2,10 @@
 clear
 
 # vars
-# bin_dir="$(dirname $(realpath $0))"
-bin_dir="$(dirname $(readlink $0))"
+bin_dir="$(dirname $(realpath $0))"
+# bin_dir="$(dirname $(readlink $0))"
 filename=$1
+output_dir=$2
 last_line=""
 cur_script=""
 script_no=0
@@ -24,27 +25,32 @@ then
 fi
 
 # check if initted
-if [ ! -d bash_down ]
+if [ ! -d __bd__ ]
 then
   echo 'this folder is not initted for bash_down. please run "bash_down init"'
   echo
   exit
 fi
 
-# recreate output files
-rm -rf bash_down/build/scripts
-mkdir bash_down/build/scripts
-rm -rf bash_down/build/tests
-mkdir bash_down/build/tests
-rm bash_down/build/spec.md
-touch bash_down/build/spec.md
-rm bash_down/build/spec.txt
-touch bash_down/build/spec.txt
+if [ -z "$output_dir" ]
+then
+  output_dir=__bd__
+fi
 
 if [ -z "$filename" ]
 then
-  filename="bash_down/spec.bd"
+  filename="__bd__/spec.bd"
 fi
+
+
+# recreate output files
+rm -rf $output_dir/build
+mkdir $output_dir/build
+mkdir $output_dir/build/scripts
+mkdir $output_dir/build/tests
+touch $output_dir/build/spec.md
+touch $output_dir/build/spec.txt
+
 
 # iterate through lines in file and decide how to parse/output them
 IFS=''
@@ -58,7 +64,7 @@ do
   # commented script
   elif [ ! -z "$(echo $line | grep -e '^[ ]*##![/]*.*$')" ]
   then
-    cur_script="./bash_down/build/scripts/$script_no"_"$heading_path"
+    cur_script="$output_dir/build/scripts/$script_no"_"$heading_path"
     commented_script="$heading_path"
 
   # run through parser if we have a local path after #!
@@ -71,7 +77,7 @@ do
   then
     inline_script
 
-  # execute and clear cur script if we get !#
+  # save and clear cur script if we get !#
   elif [ ! -z "$(echo $line | grep -e '^[ ]*!#$')" ]
   then
     inline_script_close
@@ -92,18 +98,18 @@ do
     
   # just write to markdown
   else
-    echo $line >> bash_down/build/spec.md
-    echo $line >> bash_down/build/spec.txt
+    echo $line >> $output_dir/build/spec.md
+    echo $line >> $output_dir/build/spec.txt
     last_line="$line"
   fi
 
 done < "$filename"
 
 # print the text spec
-cat bash_down/build/spec.txt
+cat $output_dir/build/spec.txt
 
 # then execute the scripts
-for file in bash_down/build/scripts/*
+for file in $output_dir/build/scripts/*
 do
   if [ -s $file ]
   then
@@ -112,12 +118,12 @@ do
 done
 
 # then execute the runners
-for path in bash_down/build/tests/*
+for path in $output_dir/build/tests/*
 do
   if [ -s $path ]
   then
   file=`basename "$path"`
-    output=`"./bash_down/runners/$file" "./bash_down/build/tests/$file"`
+    output=`"./__bd__/runners/$file" "$output_dir/build/tests/$file"`
     cat<<<"$output"
   fi
 done
